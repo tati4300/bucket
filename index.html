@@ -22,7 +22,8 @@
       body { margin: 0.2em; }
       table { font-size: 0.95em; min-width: 400px; }
       th, td { padding: 1px 2px; }
-      td.bucket-no { font-size: 0.8em; }
+      td.bucket-no { font-size: 0.7em; }
+      .th-small { font-size: 0.7em; }
     }
   </style>
 </head>
@@ -101,10 +102,10 @@
       for (let round = 1; round <= 3; round++) {
         tablesHtml += `<h3>${roundNames[round-1]}</h3><div class="table-responsive"><table><tr>
           <th>No.</th>
-          <th>Soaking Start</th>
-          <th>Soaking Complete</th>
-          <th>Production Time</th>
-          <th>Production End Time</th>
+          <th class="th-small">Soaking<br>Start</th>
+          <th class="th-small">Soaking<br>Complete</th>
+          <th class="th-small">Production<br>Time</th>
+          <th class="th-small">Production<br>End Time</th>
         </tr>`;
         let endTimes = [];
         for (let i = 0; i < tankCount; i++) {
