@@ -78,9 +78,9 @@
       document.getElementById('result').style.display = '';
       document.getElementById('summary').innerHTML = `
         <ul>
-          <li>Suggested quantity of soaked beans： ${suggestedTanks.toFixed(2)} buckets</li>
-          <li>bucket：${beansPerTank.toFixed(2)} kg</li>
-          <li>Single bucket production time： ${tankProdTimeHour.toFixed(2)} hour</li>
+          <li>Suggested quantity of soaked beans： ${Math.round(suggestedTanks)} buckets</li>
+          <li>bucket：${Math.round(beansPerTank)} kg</li>
+          <li>Single bucket production time： ${Math.round(tankProdTimeHour)} hour</li>
         </ul>
       `;
 
