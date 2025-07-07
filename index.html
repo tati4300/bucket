@@ -18,10 +18,11 @@
     table { border-collapse: collapse; margin-bottom: 2em; width: 100%; font-size: 1em; }
     th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
     th { background: #f0f0f0; }
-    @media (max-width: 550px) {
+    @media (max-width: 600px) {
       body { margin: 0.2em; }
       table { font-size: 0.95em; min-width: 400px; }
       th, td { padding: 1px 2px; }
+      td.bucket-no { font-size: 0.8em; }
     }
   </style>
 </head>
@@ -113,7 +114,7 @@
           let prodStart = soakEnd;
           let prodEnd = prodStart + tankProdTimeHour;
           tablesHtml += `<tr>
-            <td>Bucket${i+1}</td>
+            <td class="bucket-no">Bucket${i+1}</td>
             <td>${formatTime(soakStart)}</td>
             <td>${formatTime(soakEnd)}</td>
             <td>${formatTime(prodStart)}</td>
