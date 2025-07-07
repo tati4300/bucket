@@ -18,37 +18,13 @@
     table { border-collapse: collapse; margin-bottom: 2em; width: 100%; min-width: 400px; font-size: 1em; }
     th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
     th { background: #f0f0f0; }
-    /* 方案一：手機表格自動換行 */
     @media (max-width: 600px) {
       body { margin: 0.5em; }
       h1 { font-size: 1.2em; }
       h2 { font-size: 1em; }
       .section { margin-bottom: 1em; }
-      table, thead, tbody, th, td, tr { display: block; width: 100%; }
-      thead tr { display: none; }
-      td {
-        position: relative;
-        padding-left: 6em;
-        min-height: 2em;
-        font-size: 0.98em;
-        border: 1px solid #aaa;
-        box-sizing: border-box;
-        text-align: left;
-      }
-      td:before {
-        position: absolute;
-        left: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        white-space: nowrap;
-        font-weight: bold;
-        font-size: 0.98em;
-      }
-      td:nth-of-type(1):before { content: "Number"; }
-      td:nth-of-type(2):before { content: "Soaking Start"; }
-      td:nth-of-type(3):before { content: "Soaking Complete"; }
-      td:nth-of-type(4):before { content: "Production Time"; }
-      td:nth-of-type(5):before { content: "Production End"; }
+      table { font-size: 0.95em; min-width: 400px; }
+      th, td { padding: 2px 4px; }
     }
   </style>
 </head>
@@ -81,7 +57,7 @@
   <div class="section result-section" id="result" style="display:none;">
     <h2>Calculation results</h2>
     <div id="summary"></div>
-    <div id="tables"></div>
+    <div id="tables" class="table-responsive"></div>
   </div>
 
   <script>
@@ -123,17 +99,18 @@
       // 三輪時序表
       let tablesHtml = '';
       let prevEndTimes = Array(tankCount).fill(0); // 前一輪結束時間
+      const roundNames = ["First Round", "Second Round", "Third Round"];
       for (let round = 1; round <= 3; round++) {
-        tablesHtml += `<h3>${round}Round</h3>
-        <div class="table-responsive"><table><thead><tr>
-          <th>Number</th>
+        tablesHtml += `<h3>${roundNames[round-1]}</h3><div class="table-responsive"><table><tr>
+          <th>serial number</th>
           <th>Soaking Start</th>
           <th>Soaking Complete</th>
           <th>Production Time</th>
           <th>Production End Time</th>
-        </tr></thead><tbody>`;
+        </tr>`;
         let endTimes = [];
         for (let i = 0; i < tankCount; i++) {
+          // 第一輪從0開始，之後從上一輪同桶結束時間
           let soakStart = round === 1 ? i * tankProdTimeHour : prevEndTimes[i];
           let soakEnd = soakStart + soakTime;
           let prodStart = soakEnd;
@@ -147,7 +124,7 @@
           </tr>`;
           endTimes.push(prodEnd);
         }
-        tablesHtml += `</tbody></table></div>`;
+        tablesHtml += `</table></div>`;
         prevEndTimes = endTimes;
       }
       document.getElementById('tables').innerHTML = tablesHtml;
