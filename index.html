@@ -53,10 +53,6 @@
         <label for="totalBeans">Estimated soaked beans amount（kg）：</label>
         <input type="number" id="totalBeans" required min="1" value="600">
       </div>
-      <div class="form-row">
-        <label for="tankCount">Number of bucket（1~20）：</label>
-        <input type="number" id="tankCount" required min="1" max="20" value="20">
-      </div>
       <button type="button" onclick="calculate()">Calculate</button>
     </form>
   </div>
@@ -77,18 +73,23 @@
       h = h % 24;
       return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
     }
-
+    function formatHourMinute(hour) {
+      const h = Math.floor(hour);
+      const m = Math.round((hour - h) * 60);
+      return `${h}H${m > 0 ? m + 'M' : ''}`;
+    }
     function calculate() {
       const capacity = Number(document.getElementById('capacity').value);
       const soakTime = Number(document.getElementById('soakTime').value);
       const totalBeans = Number(document.getElementById('totalBeans').value);
-      const tankCount = Number(document.getElementById('tankCount').value);
+      
 
       // 單桶 = 預計浸泡豆量
       const beansPerTank = totalBeans;
 
       // 建議泡豆桶數量 = (浸泡時間 + 預計浸泡豆量 / 容量) * 容量 / 預計浸泡豆量
-      const suggestedTanks = (soakTime + totalBeans / capacity) * capacity / totalBeans;
+      const suggestedTanks = Math.ceil((soakTime + totalBeans / capacity) * capacity / totalBeans);
+      const tankCount = suggestedTanks; // 直接用建議桶數
 
       // 單桶生產時間 = 預計浸泡豆量 ÷ 容量
       const tankProdTimeHour = totalBeans / capacity;
@@ -99,7 +100,7 @@
         <ul>
           <li>Suggested quantity of soaked beans： <span class="result-var">${Math.round(suggestedTanks)}</span> buckets</li>
           <li>bucket：<span class="result-var">${Math.round(beansPerTank)}</span> kg</li>
-          <li>Single bucket production time： <span class="result-var">${Math.round(tankProdTimeHour)}</span> hour</li>
+          <li>Single bucket production time： <span class="result-var">${formatHourMinute(tankProdTimeHour)}</span></li>
         </ul>
       `;
 
