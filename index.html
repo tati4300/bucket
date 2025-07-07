@@ -7,24 +7,24 @@
   <style>
     body { font-family: "Microsoft JhengHei", Arial, sans-serif; margin: 2em; }
     h1, h2 { color: #2c3e50; }
-    ul, ol { margin-left: 2em; }
-    code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
     .section { margin-bottom: 2em; }
-    table { border-collapse: collapse; margin-bottom: 2em; width: 100%; min-width: 500px; font-size: 1em; }
-    th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
-    th { background: #f0f0f0; }
-    input[type="number"] { width: 100%; max-width: 200px; font-size: 1.1em; padding: 4px; }
-    button { font-size: 1.1em; padding: 8px 24px; margin-top: 8px; }
+    form { max-width: 400px; margin: 0 auto; }
+    .form-row { margin-bottom: 1em; }
+    .form-row label { display: block; margin-bottom: 0.3em; font-size: 1.08em; }
+    .form-row input[type="number"] { width: 100%; font-size: 1.1em; padding: 6px; box-sizing: border-box; }
+    button { font-size: 1.1em; padding: 10px 0; width: 100%; margin-top: 8px; }
     .result-section { margin-top: 2em; }
     .table-responsive { overflow-x: auto; }
+    table { border-collapse: collapse; margin-bottom: 2em; width: 100%; min-width: 400px; font-size: 1em; }
+    th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
+    th { background: #f0f0f0; }
     @media (max-width: 600px) {
       body { margin: 0.5em; }
-      h1 { font-size: 1.3em; }
-      h2 { font-size: 1.1em; }
+      h1 { font-size: 1.2em; }
+      h2 { font-size: 1em; }
       .section { margin-bottom: 1em; }
       table { font-size: 0.95em; min-width: 400px; }
       th, td { padding: 2px 4px; }
-      button { width: 100%; }
     }
   </style>
 </head>
@@ -34,10 +34,22 @@
   <div class="section">
     <h2>Parameter Input</h2>
     <form id="calcForm" onsubmit="return false;">
-      <label>Capacity（kg/hr）：<input type="number" id="capacity" required min="1" value="200"></label>
-      <label>Soaking time（hour）：<input type="number" id="soakTime" required min="1" value="12"></label>
-      <label>Estimated soaked beans amount（kg）：<input type="number" id="totalBeans" required min="1" value="600"></label>
-      <label>Number of bucket（1~20）：<input type="number" id="tankCount" required min="1" max="20" value="20"></label>
+      <div class="form-row">
+        <label for="capacity">Capacity（kg/hr）：</label>
+        <input type="number" id="capacity" required min="1" value="200">
+      </div>
+      <div class="form-row">
+        <label for="soakTime">Soaking time（hour）：</label>
+        <input type="number" id="soakTime" required min="1" value="12">
+      </div>
+      <div class="form-row">
+        <label for="totalBeans">Estimated soaked beans amount（kg）：</label>
+        <input type="number" id="totalBeans" required min="1" value="600">
+      </div>
+      <div class="form-row">
+        <label for="tankCount">Number of bucket（1~20）：</label>
+        <input type="number" id="tankCount" required min="1" max="20" value="20">
+      </div>
       <button type="button" onclick="calculate()">Calculate</button>
     </form>
   </div>
