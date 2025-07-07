@@ -18,13 +18,30 @@
     table { border-collapse: collapse; margin-bottom: 2em; width: 100%; min-width: 400px; font-size: 1em; }
     th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
     th { background: #f0f0f0; }
+    /* 卡片式樣式 */
+    .card-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .card-item {
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      padding: 10px 12px;
+      font-size: 1em;
+      background: #fff;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .card-item b { display: inline-block; min-width: 4em; }
+    @media (min-width: 601px) {
+      .card-list { display: none; }
+    }
     @media (max-width: 600px) {
       body { margin: 0.5em; }
       h1 { font-size: 1.2em; }
       h2 { font-size: 1em; }
       .section { margin-bottom: 1em; }
-      table { font-size: 0.95em; min-width: 400px; }
-      th, td { padding: 2px 4px; }
+      table, .table-responsive { display: none; }
+      .card-list { display: block; }
+      .card-item { font-size: 1em; }
     }
   </style>
 </head>
@@ -57,7 +74,7 @@
   <div class="section result-section" id="result" style="display:none;">
     <h2>Calculation results</h2>
     <div id="summary"></div>
-    <div id="tables" class="table-responsive"></div>
+    <div id="tables"></div>
   </div>
 
   <script>
@@ -100,7 +117,9 @@
       let tablesHtml = '';
       let prevEndTimes = Array(tankCount).fill(0); // 前一輪結束時間
       for (let round = 1; round <= 3; round++) {
-        tablesHtml += `<h3>${round}Round</h3><div class="table-responsive"><table><tr>
+        // 桌面版表格
+        tablesHtml += `<h3>${round}Round</h3>
+        <div class="table-responsive"><table><tr>
           <th>serial number</th>
           <th>Soaking Start</th>
           <th>Soaking Complete</th>
@@ -109,7 +128,6 @@
         </tr>`;
         let endTimes = [];
         for (let i = 0; i < tankCount; i++) {
-          // 第一輪從0開始，之後從上一輪同桶結束時間
           let soakStart = round === 1 ? i * tankProdTimeHour : prevEndTimes[i];
           let soakEnd = soakStart + soakTime;
           let prodStart = soakEnd;
@@ -124,6 +142,27 @@
           endTimes.push(prodEnd);
         }
         tablesHtml += `</table></div>`;
+
+        // 手機版卡片
+        tablesHtml += `<div class="card-list">`;
+        endTimes = [];
+        for (let i = 0; i < tankCount; i++) {
+          let soakStart = round === 1 ? i * tankProdTimeHour : prevEndTimes[i];
+          let soakEnd = soakStart + soakTime;
+          let prodStart = soakEnd;
+          let prodEnd = prodStart + tankProdTimeHour;
+          tablesHtml += `
+            <div class="card-item">
+              <div><b>桶號：</b>Bucket${i+1}</div>
+              <div><b>浸泡開始：</b>${formatTime(soakStart)}</div>
+              <div><b>浸泡完成：</b>${formatTime(soakEnd)}</div>
+              <div><b>生產時間：</b>${formatTime(prodStart)}</div>
+              <div><b>生產結束：</b>${formatTime(prodEnd)}</div>
+            </div>
+          `;
+          endTimes.push(prodEnd);
+        }
+        tablesHtml += `</div>`;
         prevEndTimes = endTimes;
       }
       document.getElementById('tables').innerHTML = tablesHtml;
