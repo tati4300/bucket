@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>浸豆桶循環時序計算</title>
+  <style>
+    body { font-family: "Microsoft JhengHei", Arial, sans-serif; margin: 2em; }
+    h1, h2 { color: #2c3e50; }
+    ul, ol { margin-left: 2em; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+    .section { margin-bottom: 2em; }
+    table { border-collapse: collapse; margin-bottom: 2em; }
+    th, td { border: 1px solid #aaa; padding: 4px 8px; text-align: center; }
+    th { background: #f0f0f0; }
+    input[type="number"] { width: 80px; }
+    .result-section { margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <h1>浸豆桶循環時序計算</h1>
+
+  <div class="section">
+    <h2>Parameter Input</h2>
+    <form id="calcForm" onsubmit="return false;">
+      <label>Capacity（kg/hr）：<input type="number" id="capacity" required min="1" value="200"></label><br><br>
+      <label>Soaking time（hour）：<input type="number" id="soakTime" required min="1" value="12"></label><br><br>
+      <label>Estimated soaked beans amount（kg）：<input type="number" id="totalBeans" required min="1" value="600"></label><br><br>
+      <label>Number of bucket（1~20）：<input type="number" id="tankCount" required min="1" max="20" value="20"></label><br><br>
+      <button type="button" onclick="calculate()">Calculate</button>
+    </form>
+  </div>
+
+  <div class="section result-section" id="result" style="display:none;">
+    <h2>Calculation results</h2>
+    <div id="summary"></div>
+    <div id="tables"></div>
+  </div>
+
+  <script>
+    function formatTime(hour) {
+      // 超過24小時自動循環
+      hour = hour % 24;
+      let h = Math.floor(hour);
+      let m = Math.round((hour - h) * 60);
+      if (m === 60) { h += 1; m = 0; }
+      h = h % 24;
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    }
+
+    function calculate() {
+      const capacity = Number(document.getElementById('capacity').value);
+      const soakTime = Number(document.getElementById('soakTime').value);
+      const totalBeans = Number(document.getElementById('totalBeans').value);
+      const tankCount = Number(document.getElementById('tankCount').value);
+
+      // 單桶 = 預計浸泡豆量
+      const beansPerTank = totalBeans;
+
+      // 建議泡豆桶數量 = (浸泡時間 + 預計浸泡豆量 / 容量) * 容量 / 預計浸泡豆量
+      const suggestedTanks = (soakTime + totalBeans / capacity) * capacity / totalBeans;
+
+      // 單桶生產時間 = 預計浸泡豆量 ÷ 容量
+      const tankProdTimeHour = totalBeans / capacity;
+
+      // 顯示摘要
+      document.getElementById('result').style.display = '';
+      document.getElementById('summary').innerHTML = `
+        <ul>
+          <li>Suggested quantity of soaked beans： ${suggestedTanks.toFixed(2)} buckets</li>
+          <li>bucket：${beansPerTank.toFixed(2)} kg</li>
+          <li>Single bucket production time： ${tankProdTimeHour.toFixed(2)} hour</li>
+        </ul>
+      `;
+
+      // 三輪時序表
+      let tablesHtml = '';
+      let prevEndTimes = Array(tankCount).fill(0); // 前一輪結束時間
+      for (let round = 1; round <= 3; round++) {
+        tablesHtml += `<h3>${round}Round</h3><table><tr>
+          <th>serial number</th>
+          <th>Soaking Start</th>
+          <th>Soaking Complete</th>
+          <th>Production Time</th>
+          <th>Production End Time</th>
+        </tr>`;
+        let endTimes = [];
+        for (let i = 0; i < tankCount; i++) {
+          // 第一輪從0開始，之後從上一輪同桶結束時間
+          let soakStart = round === 1 ? i * tankProdTimeHour : prevEndTimes[i];
+          let soakEnd = soakStart + soakTime;
+          let prodStart = soakEnd;
+          let prodEnd = prodStart + tankProdTimeHour;
+          tablesHtml += `<tr>
+            <td>Bucket${i+1}</td>
+            <td>${formatTime(soakStart)}</td>
+            <td>${formatTime(soakEnd)}</td>
+            <td>${formatTime(prodStart)}</td>
+            <td>${formatTime(prodEnd)}</td>
+          </tr>`;
+          endTimes.push(prodEnd);
+        }
+        tablesHtml += `</table>`;
+        prevEndTimes = endTimes;
+      }
+      document.getElementById('tables').innerHTML = tablesHtml;
+    }
+  </script>
+</body>
+</html>
