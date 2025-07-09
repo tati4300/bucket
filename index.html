@@ -58,8 +58,8 @@
         <input type="number" id="soakTime" required min="1" value="12">
       </div>
       <div class="form-row">
-        <label for="totalBeans">Estimated soaked beans amount（kg）：</label>
-        <input type="number" id="totalBeans" required min="1" value="600">
+        <label for="totaltanks">Estimated soaked tanks amount（kg）：</label>
+        <input type="number" id="totaltanks" required min="1" value="600">
       </div>
       <div class="form-row">
         <label for="productionTime">Production Time（HH:mm）：</label>
@@ -120,7 +120,7 @@
     function calculate() {
       const capacity = Number(document.getElementById('capacity').value);
       const soakTime = Number(document.getElementById('soakTime').value);
-      const totalBeans = Number(document.getElementById('totalBeans').value);
+      const totaltanks = Number(document.getElementById('totaltanks').value);
 
       // 取得生產起始時間（24小時制，轉小時數）
       const productionTimeStr = document.getElementById('productionTime').value; // 例如 "13:00"
@@ -128,22 +128,22 @@
       const productionTime = prodHour + prodMin / 60;
 
       // 單桶 = 預計浸泡豆量
-      const beansPerTank = totalBeans;
+      const tanksPerTank = totaltanks;
 
       // 建議泡豆桶數量 = (浸泡時間 + 預計浸泡豆量 / 容量) * 容量 / 預計浸泡豆量
-      const suggestedTanks = Math.ceil((soakTime + totalBeans / capacity) * capacity / totalBeans);
+      const suggestedTanks = Math.ceil((soakTime + totaltanks / capacity) * capacity / totaltanks);
       const tankCount = suggestedTanks; // 直接用建議桶數
 
       // 單桶生產時間 = 預計浸泡豆量 ÷ 容量
-      const tankProdTimeHour = totalBeans / capacity;
+      const tankProdTimeHour = totaltanks / capacity;
       const firstSoakStart = (productionTime - soakTime + 24) % 24;
 
       // 顯示摘要
       document.getElementById('result').style.display = '';
       document.getElementById('summary').innerHTML = `
         <ul>
-          <li>Suggested quantity of soaked beans： <span class="result-var">${tankCount}</span> buckets</li>
-          <li>bucket：<span class="result-var">${Math.round(beansPerTank)}</span> kg</li>
+          <li>Suggested quantity of soaked tanks： <span class="result-var">${tankCount}</span> buckets</li>
+          <li>bucket：<span class="result-var">${Math.round(tanksPerTank)}</span> kg</li>
           <li>Single bucket production time： <span class="result-var">${formatHourMinute(tankProdTimeHour)}</span></li>
           <li>Soaking Start Time：<span class="result-var">${formatTime(firstSoakStart)}</span></li>
         </ul>
