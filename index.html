@@ -13,7 +13,8 @@
     .form-row { margin-bottom: 1em; }
     .form-row label { display: block; margin-bottom: 0.3em; font-size: 1.2em; font-weight: bold;  color: red; text-align: center;}
     .form-row input[type="number"], .form-row input[type="time"] { width: 100%; font-size: 1.2em; padding: 6px; box-sizing: border-box; text-align: center}
-    button { font-size: 1.1em; padding: 10px 0; width: 100%; margin-top: 8px; }
+    button { font-size: 1.1em; padding: 10px 0; width: 100%; margin-top: 8px; background: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #388e3c; }
     .result-section { margin-top: 2em; }
     .table-responsive { overflow-x: auto; }
     table { border-collapse: collapse; margin-bottom: 2em; width: 100%; font-size: 1em; text-align: left }
@@ -43,7 +44,7 @@
   </style>
 </head>
 <body>
-  <img src="LOGO.png" alt="Logo" style="height:60px; margin-bottom: 1em;">
+  
   <h1>浸豆桶循環時序計算</h1>
 
   <div class="section">
@@ -156,6 +157,7 @@
       for (let i = 0; i < tankCount; i++) {
         prevProdStartTimes.push(productionTime + i * tankProdTimeHour);
       }
+      let prevProdEnds = [];
       const roundNames = ["First Round", "Second Round", "Third Round"];
       for (let round = 1; round <= 3; round++) {
         tablesHtml += `<h3>${roundNames[round-1]}</h3><div class="table-responsive"><table><tr>
@@ -165,13 +167,21 @@
           <th class="th-small">Production<br>Time</th>
           <th class="th-small">Production<br>End Time</th>
         </tr>`;
-        let nextProdStartTimes = [];
+        let currProdEnds = [];
         for (let i = 0; i < tankCount; i++) {
-          // 反向回推
-          let prodStart = round === 1 ? prevProdStartTimes[i] : prevProdStartTimes[i];
-          let soakEnd = prodStart;
-          let soakStart = (soakEnd - soakTime + 24) % 24;
-          let prodEnd = prodStart + tankProdTimeHour;
+          let soakStart, soakEnd, prodStart, prodEnd;
+          if (round === 1) {
+            prodStart = prevProdStartTimes[i];
+            soakEnd = prodStart;
+            soakStart = (soakEnd - soakTime + 24) % 24;
+            prodEnd = prodStart + tankProdTimeHour;
+          } else {
+            soakStart = prevProdEnds[i]; // 上一輪的prodEnd
+            soakEnd = soakStart + soakTime;
+            prodStart = soakEnd;
+            prodEnd = prodStart + tankProdTimeHour;
+          }
+          currProdEnds[i] = prodEnd;
           tablesHtml += `<tr>
             <td class="bucket-no">Bucket${i+1}</td>
             <td>${formatTime(soakStart)}</td>
@@ -179,10 +189,9 @@
             <td>${formatTime(prodStart)}</td>
             <td>${formatTime(prodEnd)}</td>
           </tr>`;
-          nextProdStartTimes.push(prodEnd);
         }
+        prevProdEnds = currProdEnds;
         tablesHtml += `</table></div>`;
-        prevProdStartTimes = nextProdStartTimes;
       }
       document.getElementById('tables').innerHTML = tablesHtml;
     }
