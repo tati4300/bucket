@@ -62,9 +62,36 @@
         <input type="number" id="totalBeans" required min="1" value="600">
       </div>
       <div class="form-row">
-        <label for="productionTime" >Production Time（hh:mm）：</label>
-        <input type="time" id="productionTime" required step="60" value="08:00" style="font-size:1.5em; display:block; margin:0 auto;" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}">
+        <label for="productionTime">Production Time（HH:mm）：</label>
+        <input type="text" id="productionTime" required value="08:00" style="width: 100%; font-size:1.5em; padding: 6px; box-sizing: border-box; text-align:center" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:mm" oninput="validateTime(this)">
       </div>
+      <script>
+      function validateTime(input) {
+        let value = input.value;
+        // 移除非數字和冒號的字符
+        value = value.replace(/[^0-9:]/g, '');
+        
+        // 如果輸入超過5個字符，只保留前5個
+        if (value.length > 5) {
+          value = value.substr(0, 5);
+        }
+        
+        // 自動添加冒號
+        if (value.length === 2 && !value.includes(':')) {
+          value += ':';
+        }
+        
+        // 驗證時間格式
+        const timePattern = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        if (timePattern.test(value)) {
+          input.setCustomValidity('');
+        } else {
+          input.setCustomValidity('請輸入有效的24小時制時間（HH:mm）');
+        }
+        
+        input.value = value;
+      }
+      </script>
       <button type="button" onclick="calculate()">Calculate</button>
     </form>
   </div>
