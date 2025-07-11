@@ -143,9 +143,9 @@
       document.getElementById('result').style.display = '';
       document.getElementById('summary').innerHTML = `
         <ul>
-          <li>Suggested quantity of soaked tanks： <span class="result-var">${tankCount}</span> buckets</li>
-          <li>bucket：<span class="result-var">${Math.round(tanksPerTank)}</span> kg</li>
-          <li>Single bucket production time： <span class="result-var">${formatHourMinute(tankProdTimeHour)}</span></li>
+          <li>Suggested quantity of soaked tanks： <span class="result-var">${tankCount}</span> tanks</li>
+          <li>tank：<span class="result-var">${Math.round(tanksPerTank)}</span> kg</li>
+          <li>Single tank production time： <span class="result-var">${formatHourMinute(tankProdTimeHour)}</span></li>
           <li>Soaking Start Time：<span class="result-var">${formatTime(firstSoakStart)}</span></li>
         </ul>
       `;
@@ -183,7 +183,7 @@
           }
           currProdEnds[i] = prodEnd;
           tablesHtml += `<tr>
-            <td class="bucket-no">Bucket${i+1}</td>
+            <td class="bucket-no">tank${i+1}</td>
             <td>${formatTime(soakStart)}</td>
             <td>${formatTime(soakEnd)}</td>
             <td>${formatTime(prodStart)}</td>
